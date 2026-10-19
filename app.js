@@ -1,21 +1,40 @@
 // Standup Jokes: pick a category, press Space, read it out loud.
 // Two-part jokes keep the punchline hidden until the second press.
+// Every category is safe-mode only, except NSFW, which never mixes into the others.
 
 const JOKEAPI = 'https://v2.jokeapi.dev/joke/';
 const OFFICIAL = 'https://official-joke-api.appspot.com/jokes/';
 const DADJOKE = 'https://icanhazdadjoke.com/';
 const TIMEOUT_MS = 6000;
 
+function fromJokeApi(joke) {
+  return joke.type === 'twopart'
+    ? { id: joke.id, setup: joke.setup, punchline: joke.delivery }
+    : { id: joke.id, setup: joke.joke, punchline: null };
+}
+
 const jokeApi = (category) => ({
   name: 'JokeAPI',
   async get() {
     const res = await fetchJson(`${JOKEAPI}${category}?safe-mode&lang=en`);
     if (res.error) throw new Error(res.message || 'JokeAPI error');
-    return res.type === 'twopart'
-      ? { id: res.id, setup: res.setup, punchline: res.delivery }
-      : { id: res.id, setup: res.joke, punchline: null };
+    if (!res.safe) throw new Error('unsafe joke despite safe-mode');
+    return fromJokeApi(res);
   },
 });
+
+// JokeAPI can't ask for "only NSFW", so pull a batch without safe mode and
+// keep the flagged ones. Racist/sexist jokes stay blacklisted.
+const nsfwApi = {
+  name: 'JokeAPI',
+  async get(isNew) {
+    const res = await fetchJson(`${JOKEAPI}Any?lang=en&blacklistFlags=racist,sexist&amount=10`);
+    if (res.error) throw new Error(res.message || 'JokeAPI error');
+    const flagged = res.jokes.filter((j) => j.flags.nsfw || j.flags.explicit);
+    if (!flagged.length) throw new Error('no NSFW joke in this batch');
+    return fromJokeApi(flagged.find((j) => isNew(`JokeAPI:${j.id}`)) || flagged[0]);
+  },
+};
 
 const officialApi = (type) => ({
   name: 'Official Joke API',
@@ -42,6 +61,7 @@ const CATEGORIES = [
   { key: 'misc', label: '🎭 Misc', sources: [jokeApi('Misc'), officialApi('general')] },
   { key: 'spooky', label: '👻 Spooky', sources: [jokeApi('Spooky')] },
   { key: 'christmas', label: '🎄 Christmas', sources: [jokeApi('Christmas')] },
+  { key: 'nsfw', label: '🔞 NSFW', nsfw: true, sources: [nsfwApi] },
 ];
 
 // Used only when every API is unreachable (office Wi-Fi, rate limit, ...).
@@ -96,10 +116,11 @@ function pick(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+// NSFW is never restored on reload, so the page can't open on it mid-meeting.
 function loadCategory() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (CATEGORIES.some((c) => c.key === saved)) return saved;
+    if (CATEGORIES.some((c) => c.key === saved && !c.nsfw)) return saved;
   } catch (e) { /* storage blocked: fall back to Random */ }
   return 'any';
 }
@@ -108,17 +129,18 @@ function saveCategory(key) {
   try { localStorage.setItem(STORAGE_KEY, key); } catch (e) { /* ignore */ }
 }
 
-async function fetchJoke() {
-  const pool = category === 'any'
-    ? CATEGORIES.filter((c) => c.sources)
-    : [CATEGORIES.find((c) => c.key === category)];
+async function fetchJoke(key) {
+  const pool = key === 'any'
+    ? CATEGORIES.filter((c) => c.sources && !c.nsfw)
+    : [CATEGORIES.find((c) => c.key === key)];
+  const isNew = (seenKey) => !seen.has(seenKey);
 
   // A few tries to dodge repeats and the odd failing API.
   for (let attempt = 0; attempt < 4; attempt++) {
     const cat = pick(pool);
     const source = pick(cat.sources);
     try {
-      const joke = await source.get();
+      const joke = await source.get(isNew);
       const key = `${source.name}:${joke.id}`;
       if (seen.has(key) && attempt < 3) continue;
       seen.add(key);
@@ -144,29 +166,41 @@ async function step() {
     return;
   }
 
-  loading = true;
-  els.card.classList.add('loading');
-  els.go.disabled = true;
+  const requested = category;
+  let joke;
+  setLoading(true);
   try {
-    current = await fetchJoke();
-    revealed = false;
-    count++;
+    joke = await fetchJoke(requested);
   } finally {
-    loading = false;
-    els.card.classList.remove('loading');
-    els.go.disabled = false;
-    render();
+    setLoading(false);
   }
+
+  // The category changed while we waited: drop this joke so an NSFW one
+  // can never land under another category (and vice versa).
+  if (category !== requested) return step();
+
+  current = joke;
+  revealed = false;
+  count++;
+  render();
+}
+
+function setLoading(on) {
+  loading = on;
+  els.card.classList.toggle('loading', on);
+  els.go.disabled = on;
 }
 
 function render() {
   if (!current) return;
+  const twoPart = Boolean(current.punchline);
   els.meta.textContent = `#${count} · ${current.category} · ${current.source}`;
   els.setup.textContent = current.setup;
   els.punchline.textContent = current.punchline || '';
-  els.punchline.hidden = !(current.punchline && revealed);
-  els.drum.hidden = !(current.punchline && revealed);
-  els.go.textContent = current.punchline && !revealed ? 'Reveal punchline' : 'Next joke';
+  els.punchline.hidden = !twoPart;
+  els.drum.hidden = !twoPart;
+  els.card.classList.toggle('revealed', revealed);
+  els.go.textContent = twoPart && !revealed ? 'Reveal punchline' : 'Next joke';
   els.copy.disabled = false;
 }
 

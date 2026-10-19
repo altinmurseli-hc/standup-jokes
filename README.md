@@ -4,7 +4,7 @@ One clean joke for the daily standup. Pick a category, press **Space**, read it 
 
 **Live:** https://altinmurseli-hc.github.io/standup-jokes/
 
-- Categories: Random, Programming, Dad, Pun, Knock-knock, Misc, Spooky, Christmas, NSFW
+- Categories: Random, Dad, Pun, Knock-knock, Misc, Spooky, Christmas, NSFW
 - Two-part jokes hide the punchline until you press again
 - Every category except NSFW is safe-mode only; NSFW jokes never show up anywhere else (Random included)
 - NSFW is never remembered on reload, so the page always opens on a clean category

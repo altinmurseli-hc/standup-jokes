@@ -28,7 +28,7 @@ const jokeApi = (category) => ({
 const nsfwApi = {
   name: 'JokeAPI',
   async get(isNew) {
-    const res = await fetchJson(`${JOKEAPI}Any?lang=en&blacklistFlags=racist,sexist&amount=10`);
+    const res = await fetchJson(`${JOKEAPI}Misc,Dark,Pun,Spooky,Christmas?lang=en&blacklistFlags=racist,sexist&amount=10`);
     if (res.error) throw new Error(res.message || 'JokeAPI error');
     const flagged = res.jokes.filter((j) => j.flags.nsfw || j.flags.explicit);
     if (!flagged.length) throw new Error('no NSFW joke in this batch');
@@ -54,7 +54,6 @@ const dadApi = {
 
 const CATEGORIES = [
   { key: 'any', label: '🎲 Random' },
-  { key: 'programming', label: '💻 Programming', sources: [jokeApi('Programming'), officialApi('programming')] },
   { key: 'dad', label: '👨 Dad', sources: [dadApi, officialApi('dad')] },
   { key: 'pun', label: '🤓 Pun', sources: [jokeApi('Pun')] },
   { key: 'knock', label: '🚪 Knock-knock', sources: [officialApi('knock-knock')] },
@@ -66,13 +65,13 @@ const CATEGORIES = [
 
 // Used only when every API is unreachable (office Wi-Fi, rate limit, ...).
 const OFFLINE = [
-  ['Why do programmers prefer dark mode?', 'Because light attracts bugs.'],
-  ['How many programmers does it take to change a light bulb?', "None. That's a hardware problem."],
-  ['Why did the developer go broke?', 'Because he used up all his cache.'],
+  ['Why did the scarecrow win an award?', 'Because he was outstanding in his field.'],
+  ['What do you call a bear with no teeth?', 'A gummy bear.'],
+  ["Why can't a bicycle stand up by itself?", "It's two tired."],
   ['What is a standup meeting?', 'A sitdown meeting where everyone is too tired to sit down.'],
   ["Why don't skeletons fight each other?", "They don't have the guts."],
   ['I told my computer I needed a break.', 'It said: "No problem, I\'ll go to sleep."'],
-  ['Why was the JavaScript developer sad?', "Because he didn't Node how to Express himself."],
+  ['What did the ocean say to the beach?', 'Nothing, it just waved.'],
   ['What do you call a fake noodle?', 'An impasta.'],
 ];
 

@@ -63,9 +63,10 @@ const CATEGORIES = [
   { key: 'spooky', label: '👻 Spooky', sources: cleanSources('spooky') },
   { key: 'christmas', label: '🎄 Christmas', sources: cleanSources('christmas') },
   { key: 'sq', label: '🇦🇱🇽🇰 Albanian', inRandom: false, sources: [albanianList('sq', ALBANIAN)] },
-  { key: 'favs', label: '⭐ Favourites' },
+  { key: 'favs', label: '⭐ Favourites', favourites: true },
   { key: 'nsfw', label: '🔞 NSFW', nsfw: true, live: true, sources: [nsfwApi] },
   { key: 'sq-nsfw', label: '🔞 Albanian NSFW', nsfw: true, sources: [albanianList('sq-nsfw', ALBANIAN_NSFW)] },
+  { key: 'nsfw-favs', label: '🔞 NSFW Favourites', nsfw: true, favourites: true },
 ];
 
 const tag = (joke, cat, source) => ({
@@ -161,7 +162,8 @@ function saveCategory(key) {
   try { localStorage.setItem(STORAGE.category, key); } catch (e) { /* ignore */ }
 }
 
-const inNsfw = () => Boolean(CATEGORIES.find((c) => c.key === category)?.nsfw);
+const currentCategory = () => CATEGORIES.find((c) => c.key === category);
+const inNsfw = () => Boolean(currentCategory()?.nsfw);
 
 // NSFW jokes stay in the NSFW category, also when stepping back through history.
 const allowedHere = (joke) => !joke.nsfw || inNsfw();
@@ -243,7 +245,7 @@ function step() {
 
 async function fetchNew() {
   if (loading) return;
-  if (category === 'favs') return showFavourite();
+  if (currentCategory().favourites) return showFavourite();
 
   const requested = category;
   let joke;
@@ -277,30 +279,31 @@ function go(dir) {
   render();
 }
 
+// Saved NSFW jokes only ever show under 🔞 NSFW Favourites, so ⭐ Favourites stays clean.
+const favouritesFor = (nsfw) => favourites.filter((f) => Boolean(f.nsfw) === nsfw);
+
 function showFavourite() {
-  if (!favourites.length) {
-    showMessage('⭐ Favourites', 'No favourites yet. Press ☆ Save on a joke you like.');
+  const list = favouritesFor(inNsfw());
+  if (!list.length) {
+    showMessage(currentCategory().label, `No favourites yet. Press ☆ Save on ${inNsfw() ? 'an NSFW' : 'a'} joke you like.`);
     return;
   }
-  favPos = (favPos + 1) % favourites.length;
-  if (favourites.length > 1 && favourites[favPos].key === history[pos]?.key) {
-    favPos = (favPos + 1) % favourites.length;
+  favPos = (favPos + 1) % list.length;
+  if (list.length > 1 && list[favPos].key === history[pos]?.key) {
+    favPos = (favPos + 1) % list.length;
   }
-  show({ ...favourites[favPos], label: `⭐ ${favPos + 1}/${favourites.length} · ${favourites[favPos].category}` });
+  show({ ...list[favPos], label: `⭐ ${favPos + 1}/${list.length} · ${list[favPos].category}` });
 }
 
-// NSFW jokes can't be saved, so Favourites stays clean.
 function toggleFavourite() {
   const joke = history[pos];
-  if (!joke || joke.nsfw) return;
+  if (!joke) return;
   const i = favourites.findIndex((f) => f.key === joke.key);
   if (i >= 0) {
     favourites.splice(i, 1);
-    if (i <= favPos) favPos--;
   } else {
-    const { key, setup, punchline, category: cat, source } = joke;
-    favourites.unshift({ key, setup, punchline, category: cat, source });
-    if (favPos >= 0) favPos++;
+    const { key, setup, punchline, category: cat, source, nsfw } = joke;
+    favourites.unshift({ key, setup, punchline, category: cat, source, nsfw });
   }
   saveList(STORAGE.favourites, favourites);
   renderCategories();
@@ -334,10 +337,10 @@ function renderTools() {
   els.back.disabled = loading || neighbour(-1) < 0;
   els.forward.disabled = loading || neighbour(1) < 0;
   els.copy.disabled = !joke;
-  els.fav.disabled = !joke || joke.nsfw;
+  els.fav.disabled = !joke;
   els.fav.setAttribute('aria-pressed', String(faved));
   els.fav.textContent = faved ? '⭐ Saved' : '☆ Save';
-  els.fav.title = joke?.nsfw ? "NSFW jokes can't be saved" : 'Save to Favourites';
+  els.fav.title = joke?.nsfw ? 'Save to 🔞 NSFW Favourites' : 'Save to ⭐ Favourites';
 }
 
 function renderCategories() {
@@ -346,7 +349,8 @@ function renderCategories() {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'chip';
-    chip.textContent = c.key === 'favs' && favourites.length ? `${c.label} (${favourites.length})` : c.label;
+    const saved = c.favourites ? favouritesFor(Boolean(c.nsfw)).length : 0;
+    chip.textContent = saved ? `${c.label} (${saved})` : c.label;
     chip.setAttribute('aria-pressed', String(c.key === category));
     chip.addEventListener('click', () => {
       category = c.key;

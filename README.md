@@ -9,12 +9,12 @@ One clean joke for the daily standup. Pick a category, press **Space**, read it 
 - **← / →** step back and forward through the jokes you already had
 - **☆ Save** keeps a joke in Favourites (stored in your browser)
 - **📅 Joke of the day** is the same joke for everyone on the same date
+- **🚫 Remove joke** never shows that joke again (stored in your browser); on the joke of the day it moves the day to the next joke. Undo is offered for a few seconds
 - **F** (or ⛶ Big screen) shows only the joke, large, for screen sharing
 - Seen jokes are remembered across reloads, so you get new ones first; never the same joke twice in a row
-- Knock-knock uses a built-in list of 84 jokes
-- Every category except NSFW is safe-mode only; NSFW jokes never show up anywhere else (Random, back/forward and Favourites included)
+- Every category except NSFW only uses jokes that were read and checked by hand for a work meeting: 872 in `clean-jokes.js` plus 84 knock-knock jokes in `jokes.js`. They ship with the page, so nothing unchecked can come in from an API
+- NSFW is the only live category (JokeAPI). Its jokes never show up anywhere else (Random, back/forward and Favourites included)
 - NSFW is never remembered on reload, so the page always opens on a clean category
-- Falls back to a few built-in jokes if the APIs are down
 
 | Key | Does |
 | --- | --- |
@@ -22,7 +22,7 @@ One clean joke for the daily standup. Pick a category, press **Space**, read it 
 | ← → | Earlier / later jokes |
 | F | Big screen on/off (Esc also exits) |
 
-Plain HTML/CSS/JS, no build step. Jokes come from
+Plain HTML/CSS/JS, no build step. To drop a clean joke for everyone, delete its line in `clean-jokes.js`. Jokes come from
 [JokeAPI](https://jokeapi.dev), [icanhazdadjoke](https://icanhazdadjoke.com) and
 [Official Joke API](https://github.com/15Dkatz/official_joke_api).
 

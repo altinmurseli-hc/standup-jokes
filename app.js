@@ -1,19 +1,19 @@
 // Standup Jokes: pick a category, press Space, read it out loud.
 // Two-part jokes keep the punchline hidden until the second press.
-// Every category is safe-mode only, except NSFW, which never mixes into the others.
+// The clean categories only use the hand-checked jokes in clean-jokes.js.
+// NSFW is the only live one, and its jokes never mix into the others.
 
 const JOKEAPI = 'https://v2.jokeapi.dev/joke/';
-const OFFICIAL = 'https://official-joke-api.appspot.com/jokes/';
-const OFFICIAL_COUNT = 451; // ids run 1..451; the joke of the day picks one by date
-const DADJOKE = 'https://icanhazdadjoke.com/';
 const TIMEOUT_MS = 6000;
 
 const STORAGE = {
   category: 'standup-jokes:category',
   seen: 'standup-jokes:seen',
   favourites: 'standup-jokes:favourites',
+  removed: 'standup-jokes:removed',
 };
 const SEEN_MAX = 2000;
+const UNDO_MS = 6000;
 
 function fromJokeApi(joke) {
   return joke.type === 'twopart'
@@ -22,17 +22,6 @@ function fromJokeApi(joke) {
 }
 
 // Every source returns a list of candidates; fetchJoke picks an unseen one.
-const jokeApi = (category) => ({
-  name: 'JokeAPI',
-  async get() {
-    const res = await fetchJson(`${JOKEAPI}${category}?safe-mode&lang=en&amount=10`);
-    if (res.error) throw new Error(res.message || 'JokeAPI error');
-    const safe = (res.jokes || [res]).filter((j) => j.safe);
-    if (!safe.length) throw new Error('unsafe jokes despite safe-mode');
-    return safe.map(fromJokeApi);
-  },
-});
-
 // JokeAPI can't ask for "only NSFW", so pull a batch without safe mode and
 // keep the flagged ones. Racist/sexist jokes stay blacklisted.
 const nsfwApi = {
@@ -46,44 +35,44 @@ const nsfwApi = {
   },
 };
 
-const officialApi = (type) => ({
-  name: 'Official Joke API',
-  async get() {
-    const jokes = await fetchJson(`${OFFICIAL}${type}/ten`);
-    return jokes.map((j) => ({ id: j.id, setup: tidy(j.setup), punchline: tidy(j.punchline) }));
-  },
-});
+const bundled = (name, jokes) => ({ name, jokes, async get() { return jokes; } });
 
-const dadApi = {
-  name: 'icanhazdadjoke',
-  async get() {
-    const res = await fetchJson(DADJOKE, { headers: { Accept: 'application/json' } });
-    return [{ id: res.id, setup: res.joke, punchline: null }];
-  },
-};
+// One source per origin, so every joke keeps the key it had when it came from
+// the live API (seen jokes and favourites saved back then still match).
+const cleanSources = (category) => CLEAN_JOKES
+  .filter((group) => group.category === category)
+  .map((group) => bundled(group.source, group.jokes.map(([id, setup, punchline]) => ({ id, setup, punchline }))));
 
-const knockList = {
-  name: 'built-in',
-  async get() {
-    return KNOCK_KNOCK.map(([who, punchline]) => ({
-      id: `knock:${who}`,
-      setup: `Knock, knock.\nWho's there?\n${who}.\n${who} who?`,
-      punchline,
-    }));
-  },
-};
+const knockList = bundled('built-in', KNOCK_KNOCK.map(([who, punchline]) => ({
+  id: `knock:${who}`,
+  setup: `Knock, knock.\nWho's there?\n${who}.\n${who} who?`,
+  punchline,
+})));
 
 const CATEGORIES = [
   { key: 'any', label: '🎲 Random' },
-  { key: 'dad', label: '👨 Dad', sources: [dadApi] },
-  { key: 'pun', label: '🤓 Pun', sources: [jokeApi('Pun')] },
+  { key: 'dad', label: '👨 Dad', sources: cleanSources('dad') },
+  { key: 'pun', label: '🤓 Pun', sources: cleanSources('pun') },
   { key: 'knock', label: '🚪 Knock-knock', sources: [knockList] },
-  { key: 'misc', label: '🎭 Misc', sources: [jokeApi('Misc'), officialApi('general')] },
-  { key: 'spooky', label: '👻 Spooky', sources: [jokeApi('Spooky')] },
-  { key: 'christmas', label: '🎄 Christmas', sources: [jokeApi('Christmas')] },
+  { key: 'misc', label: '🎭 Misc', sources: cleanSources('misc') },
+  { key: 'spooky', label: '👻 Spooky', sources: cleanSources('spooky') },
+  { key: 'christmas', label: '🎄 Christmas', sources: cleanSources('christmas') },
   { key: 'favs', label: '⭐ Favourites' },
   { key: 'nsfw', label: '🔞 NSFW', nsfw: true, sources: [nsfwApi] },
 ];
+
+const tag = (joke, cat, source) => ({
+  ...joke,
+  key: `${source.name}:${joke.id}`,
+  category: cat.label,
+  source: source.name,
+  nsfw: Boolean(cat.nsfw),
+});
+
+// Every clean joke in a fixed order, for the joke of the day.
+const DAILY_POOL = CATEGORIES
+  .filter((c) => c.sources && !c.nsfw)
+  .flatMap((cat) => cat.sources.flatMap((source) => source.jokes.map((joke) => tag(joke, cat, source))));
 
 const OFFLINE_JOKES = OFFLINE.map(([setup, punchline], i) => ({
   key: `offline:${i}`, setup, punchline, category: 'Offline backup', source: 'built-in',
@@ -101,6 +90,7 @@ const els = {
   forward: document.getElementById('forward'),
   fav: document.getElementById('fav'),
   copy: document.getElementById('copy'),
+  remove: document.getElementById('remove'),
   today: document.getElementById('today'),
   big: document.getElementById('big'),
 };
@@ -109,11 +99,14 @@ const els = {
 let tick = 0;
 const seen = loadSeen();
 const favourites = loadList(STORAGE.favourites);
+const removed = new Set(loadList(STORAGE.removed)); // keys of jokes never to show again
 const history = []; // every joke shown this session, oldest first
 let pos = -1; // index in history of the joke on screen
+let count = 0;
 let favPos = -1;
 let category = loadCategory();
 let loading = false;
+let undo = null; // { joke, timer } for a few seconds after a removal
 
 function fetchJson(url, options = {}) {
   const controller = new AbortController();
@@ -124,11 +117,6 @@ function fetchJson(url, options = {}) {
       return res.json();
     })
     .finally(() => clearTimeout(timer));
-}
-
-// The Official Joke API pads knock-knock lines with spaces around \n.
-function tidy(text) {
-  return String(text).split('\n').map((line) => line.trim()).join('\n');
 }
 
 function pick(list) {
@@ -197,55 +185,39 @@ async function fetchJoke(key) {
     : [CATEGORIES.find((c) => c.key === key)];
   const tried = [];
 
-  // A few tries to find an unseen joke and dodge the odd failing API.
+  // Built-in lists answer at once. NSFW goes to the network, so a few tries
+  // to find an unseen joke and dodge the odd failed request.
   for (let attempt = 0; attempt < 4; attempt++) {
     const cat = pick(pool);
-    const source = pick(cat.sources);
     try {
-      const jokes = (await source.get()).map((joke) => ({
-        ...joke,
-        key: `${source.name}:${joke.id}`,
-        category: cat.label,
-        source: source.name,
-        nsfw: Boolean(cat.nsfw),
-      }));
+      const lists = await Promise.all(cat.sources.map(async (source) =>
+        (await source.get()).map((joke) => tag(joke, cat, source))));
+      const jokes = lists.flat().filter((j) => !removed.has(j.key));
       if (jokes.some((j) => !seen.has(j.key))) return choose(jokes);
       tried.push(...jokes);
-      // One category with one source and a whole batch already seen:
-      // that pool is used up, so stop asking and recycle the oldest.
-      if (pool.length === 1 && cat.sources.length === 1 && jokes.length > 1) break;
+      // A built-in category with nothing unseen left: recycle the oldest.
+      if (pool.length === 1 && !cat.nsfw) break;
     } catch (e) {
-      console.warn(`${source.name} failed:`, e.message);
+      console.warn(`${cat.label} failed:`, e.message);
     }
   }
 
-  return choose(tried) || choose(OFFLINE_JOKES);
+  return choose(tried) || choose(OFFLINE_JOKES.filter((j) => !removed.has(j.key)));
 }
 
-// Same joke for everyone on the same date: a fixed Official Joke API id per day.
-async function fetchJokeOfTheDay() {
+// Same joke for everyone on the same date. A removed joke hands its day to
+// the next one in the list.
+function jokeOfTheDay() {
   const now = new Date();
   const day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5);
-  const label = '📅 Joke of the day';
-  try {
-    // 211 shares no factor with 451, so every id comes up once before any repeats.
-    // Walk on past programming jokes.
-    for (let i = 0; i < 5; i++) {
-      const id = ((day * 211 + i) % OFFICIAL_COUNT) + 1;
-      const joke = await fetchJson(`${OFFICIAL}${id}`);
-      if (joke.type === 'programming') continue;
-      return {
-        key: `Official Joke API:${joke.id}`,
-        setup: tidy(joke.setup),
-        punchline: tidy(joke.punchline),
-        category: label,
-        source: 'Official Joke API',
-      };
-    }
-  } catch (e) {
-    console.warn('joke of the day failed:', e.message);
+  // 7919 is a prime bigger than the list, so consecutive days land far apart
+  // and every joke gets a day before any repeats.
+  const start = (day * 7919) % DAILY_POOL.length;
+  for (let i = 0; i < DAILY_POOL.length; i++) {
+    const joke = DAILY_POOL[(start + i) % DAILY_POOL.length];
+    if (!removed.has(joke.key)) return { ...joke, label: `📅 Joke of the day · ${joke.category}`, daily: true };
   }
-  return { ...OFFLINE_JOKES[day % OFFLINE_JOKES.length], category: label };
+  return null;
 }
 
 function show(joke) {
@@ -253,7 +225,7 @@ function show(joke) {
     // Same joke again (one favourite, or the joke of the day twice): replay it.
     history[pos] = { ...history[pos], ...joke, revealed: false };
   } else {
-    history.push({ ...joke, n: history.length + 1, revealed: false });
+    history.push({ ...joke, n: ++count, revealed: false });
     pos = history.length - 1;
   }
   markSeen(joke.key);
@@ -304,16 +276,41 @@ async function fetchNew() {
   show(joke);
 }
 
-async function showJokeOfTheDay() {
+function showJokeOfTheDay() {
   if (loading) return;
-  let joke;
-  setLoading(true);
-  try {
-    joke = await fetchJokeOfTheDay();
-  } finally {
-    setLoading(false);
+  const joke = jokeOfTheDay();
+  if (joke) show(joke);
+}
+
+// 🚫 Never show this joke again (in this browser). The joke of the day moves on
+// to the next joke; anywhere else the next joke comes up. Undo is offered for a
+// few seconds in case of a mis-click.
+function removeJoke() {
+  const joke = history[pos];
+  if (!joke || loading) return;
+  removed.add(joke.key);
+  saveList(STORAGE.removed, [...removed]);
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].key === joke.key) history.splice(i, 1);
   }
-  show(joke);
+  pos = history.length;
+  clearTimeout(undo?.timer);
+  undo = { joke, timer: setTimeout(() => { undo = null; renderTools(); }, UNDO_MS) };
+  renderCategories();
+  if (joke.daily) showJokeOfTheDay();
+  else fetchNew();
+}
+
+function undoRemove() {
+  const { joke, timer } = undo;
+  clearTimeout(timer);
+  undo = null;
+  removed.delete(joke.key);
+  saveList(STORAGE.removed, [...removed]);
+  renderCategories();
+  // Never bring an NSFW joke back outside NSFW.
+  if (allowedHere(joke)) show(joke);
+  else renderTools();
 }
 
 // Nearest joke in history in that direction (-1 back, 1 forward) that may be
@@ -333,16 +330,19 @@ function go(dir) {
   render();
 }
 
+const savedFavourites = () => favourites.filter((f) => !removed.has(f.key));
+
 function showFavourite() {
-  if (!favourites.length) {
+  const list = savedFavourites();
+  if (!list.length) {
     showMessage('⭐ Favourites', 'No favourites yet. Press ☆ Save on a joke you like.');
     return;
   }
-  favPos = (favPos + 1) % favourites.length;
-  if (favourites.length > 1 && favourites[favPos].key === history[pos]?.key) {
-    favPos = (favPos + 1) % favourites.length;
+  favPos = (favPos + 1) % list.length;
+  if (list.length > 1 && list[favPos].key === history[pos]?.key) {
+    favPos = (favPos + 1) % list.length;
   }
-  show({ ...favourites[favPos], label: `⭐ ${favPos + 1}/${favourites.length} · ${favourites[favPos].category}` });
+  show({ ...list[favPos], label: `⭐ ${favPos + 1}/${list.length} · ${list[favPos].category}` });
 }
 
 // NSFW jokes can't be saved, so Favourites stays clean.
@@ -391,6 +391,8 @@ function renderTools() {
   els.back.disabled = loading || neighbour(-1) < 0;
   els.forward.disabled = loading || neighbour(1) < 0;
   els.copy.disabled = !joke;
+  els.remove.disabled = loading || (!undo && !joke);
+  els.remove.textContent = undo ? '↩ Undo remove' : '🚫 Remove joke';
   els.fav.disabled = !joke || joke.nsfw;
   els.fav.setAttribute('aria-pressed', String(faved));
   els.fav.textContent = faved ? '⭐ Saved' : '☆ Save';
@@ -403,7 +405,8 @@ function renderCategories() {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'chip';
-    chip.textContent = c.key === 'favs' && favourites.length ? `${c.label} (${favourites.length})` : c.label;
+    const saved = c.key === 'favs' ? savedFavourites().length : 0;
+    chip.textContent = saved ? `${c.label} (${saved})` : c.label;
     chip.setAttribute('aria-pressed', String(c.key === category));
     chip.addEventListener('click', () => {
       category = c.key;
@@ -442,6 +445,7 @@ els.go.addEventListener('click', step);
 els.forward.addEventListener('click', () => go(1));
 els.fav.addEventListener('click', toggleFavourite);
 els.copy.addEventListener('click', copyJoke);
+els.remove.addEventListener('click', () => (undo ? undoRemove() : removeJoke()));
 els.today.addEventListener('click', showJokeOfTheDay);
 els.big.addEventListener('click', toggleBig);
 els.card.addEventListener('click', () => {

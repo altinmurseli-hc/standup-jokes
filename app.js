@@ -48,7 +48,7 @@ const knockList = bundled('built-in', KNOCK_KNOCK.map(([who, punchline]) => ({
 })));
 
 // Keyed by the setup text, so adding or reordering jokes keeps "seen" intact.
-const albanianList = (prefix, jokes) => bundled('built-in', jokes.map(([setup, punchline]) => ({
+const kosovoList = (prefix, jokes) => bundled('built-in', jokes.map(([setup, punchline]) => ({
   id: `${prefix}:${setup}`,
   setup,
   punchline,
@@ -62,10 +62,10 @@ const CATEGORIES = [
   { key: 'misc', label: '🎭 Misc', sources: cleanSources('misc') },
   { key: 'spooky', label: '👻 Spooky', sources: cleanSources('spooky') },
   { key: 'christmas', label: '🎄 Christmas', sources: cleanSources('christmas') },
-  { key: 'sq', label: '🇦🇱🇽🇰 Albanian', inRandom: false, sources: [albanianList('sq', ALBANIAN)] },
+  { key: 'sq', label: '🇽🇰 Kosovo', inRandom: false, sources: [kosovoList('sq', KOSOVO)] },
   { key: 'favs', label: '⭐ Favourites', favourites: true },
   { key: 'nsfw', label: '🔞 NSFW', nsfw: true, live: true, sources: [nsfwApi] },
-  { key: 'sq-nsfw', label: '🔞 Albanian NSFW', nsfw: true, sources: [albanianList('sq-nsfw', ALBANIAN_NSFW)] },
+  { key: 'sq-nsfw', label: '🔞 Kosovo NSFW', nsfw: true, sources: [kosovoList('sq-nsfw', KOSOVO_NSFW)] },
   { key: 'nsfw-favs', label: '🔞 NSFW Favourites', nsfw: true, favourites: true },
 ];
 
@@ -180,7 +180,7 @@ function choose(jokes) {
 }
 
 async function fetchJoke(key) {
-  // Random: the English clean categories only (no NSFW, no Albanian).
+  // Random: the English clean categories only (no NSFW, no Kosovo).
   const pool = key === 'any'
     ? CATEGORIES.filter((c) => c.sources && !c.nsfw && c.inRandom !== false)
     : [CATEGORIES.find((c) => c.key === key)];

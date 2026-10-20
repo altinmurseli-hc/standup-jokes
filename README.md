@@ -4,14 +4,14 @@ One clean joke for the daily standup. Pick a category, press **Space**, read it 
 
 **Live:** https://altinmurseli-hc.github.io/standup-jokes/
 
-- Categories: Random, Dad, Pun, Knock-knock, Misc, Spooky, Christmas, Albanian (Albania + Kosovo), Favourites, NSFW, Albanian NSFW, NSFW Favourites
+- Categories: Random, Dad, Pun, Knock-knock, Misc, Spooky, Christmas, Kosovo, Favourites, NSFW, Kosovo NSFW, NSFW Favourites
 - Two-part jokes hide the punchline until you press again
 - **← / →** step back and forward through the jokes you already had
 - **☆ Save** keeps a joke in Favourites (stored in your browser). Saved NSFW jokes go to their own NSFW Favourites, so ⭐ Favourites stays clean
 - **F** (or ⛶ Big screen) shows only the joke, large, for screen sharing
 - Seen jokes are remembered across reloads, so you get new ones first; never the same joke twice in a row
 - Every category except NSFW only uses jokes that were read and checked by hand for a work meeting: 872 in `clean-jokes.js` plus 84 knock-knock jokes in `jokes.js`. They ship with the page, so nothing unchecked can come in from an API
-- Albanian and Albanian NSFW (`albanian-jokes.js`) hold popular jokes from Albanian joke sites and forums plus Nastradin folk tales, retold (no joke API has Albanian). Random leaves them out, so it stays English
+- Kosovo and Kosovo NSFW (`kosovo-jokes.js`) hold popular jokes from Kosovar joke blogs and forums, retold in Gheg (no joke API has Albanian). Random leaves them out, so it stays English
 - NSFW is the only live category (JokeAPI). jokes from the three NSFW categories never show up anywhere else (Random, back/forward and ⭐ Favourites included)
 - NSFW is never remembered on reload, so the page always opens on a clean category
 

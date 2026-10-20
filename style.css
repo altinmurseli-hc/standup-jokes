@@ -210,13 +210,6 @@ button.tool:hover:not(:disabled) { background: var(--chip); }
 
 button.tool[aria-pressed="true"] { border-color: var(--accent); }
 
-.keys {
-  margin: -8px 0 0;
-  color: var(--muted);
-  font-size: 13px;
-  text-align: center;
-}
-
 .big-hint {
   display: none;
   margin: 0;
@@ -229,8 +222,7 @@ button.tool[aria-pressed="true"] { border-color: var(--accent); }
 body.big .top,
 body.big .chips,
 body.big .actions,
-body.big .tools,
-body.big .keys { display: none; }
+body.big .tools { display: none; }
 
 body.big .app { max-width: 1400px; }
 

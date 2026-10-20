@@ -10,10 +10,8 @@ const STORAGE = {
   category: 'standup-jokes:category',
   seen: 'standup-jokes:seen',
   favourites: 'standup-jokes:favourites',
-  removed: 'standup-jokes:removed',
 };
 const SEEN_MAX = 2000;
-const UNDO_MS = 6000;
 
 function fromJokeApi(joke) {
   return joke.type === 'twopart'
@@ -85,7 +83,6 @@ const els = {
   forward: document.getElementById('forward'),
   fav: document.getElementById('fav'),
   copy: document.getElementById('copy'),
-  remove: document.getElementById('remove'),
   big: document.getElementById('big'),
 };
 
@@ -93,14 +90,12 @@ const els = {
 let tick = 0;
 const seen = loadSeen();
 const favourites = loadList(STORAGE.favourites);
-const removed = new Set(loadList(STORAGE.removed)); // keys of jokes never to show again
 const history = []; // every joke shown this session, oldest first
 let pos = -1; // index in history of the joke on screen
 let count = 0;
 let favPos = -1;
 let category = loadCategory();
 let loading = false;
-let undo = null; // { joke, timer } for a few seconds after a removal
 
 function fetchJson(url, options = {}) {
   const controller = new AbortController();
@@ -186,7 +181,7 @@ async function fetchJoke(key) {
     try {
       const lists = await Promise.all(cat.sources.map(async (source) =>
         (await source.get()).map((joke) => tag(joke, cat, source))));
-      const jokes = lists.flat().filter((j) => !removed.has(j.key));
+      const jokes = lists.flat();
       if (jokes.some((j) => !seen.has(j.key))) return choose(jokes);
       tried.push(...jokes);
       // A built-in category with nothing unseen left: recycle the oldest.
@@ -196,7 +191,7 @@ async function fetchJoke(key) {
     }
   }
 
-  return choose(tried) || choose(OFFLINE_JOKES.filter((j) => !removed.has(j.key)));
+  return choose(tried) || choose(OFFLINE_JOKES);
 }
 
 function show(joke) {
@@ -255,35 +250,6 @@ async function fetchNew() {
   show(joke);
 }
 
-// 🚫 Never show this joke again (in this browser) and move on to the next one.
-// Undo is offered for a few seconds in case of a mis-click.
-function removeJoke() {
-  const joke = history[pos];
-  if (!joke || loading) return;
-  removed.add(joke.key);
-  saveList(STORAGE.removed, [...removed]);
-  for (let i = history.length - 1; i >= 0; i--) {
-    if (history[i].key === joke.key) history.splice(i, 1);
-  }
-  pos = history.length;
-  clearTimeout(undo?.timer);
-  undo = { joke, timer: setTimeout(() => { undo = null; renderTools(); }, UNDO_MS) };
-  renderCategories();
-  fetchNew();
-}
-
-function undoRemove() {
-  const { joke, timer } = undo;
-  clearTimeout(timer);
-  undo = null;
-  removed.delete(joke.key);
-  saveList(STORAGE.removed, [...removed]);
-  renderCategories();
-  // Never bring an NSFW joke back outside NSFW.
-  if (allowedHere(joke)) show(joke);
-  else renderTools();
-}
-
 // Nearest joke in history in that direction (-1 back, 1 forward) that may be
 // shown in the current category, or -1.
 function neighbour(dir) {
@@ -301,19 +267,16 @@ function go(dir) {
   render();
 }
 
-const savedFavourites = () => favourites.filter((f) => !removed.has(f.key));
-
 function showFavourite() {
-  const list = savedFavourites();
-  if (!list.length) {
+  if (!favourites.length) {
     showMessage('⭐ Favourites', 'No favourites yet. Press ☆ Save on a joke you like.');
     return;
   }
-  favPos = (favPos + 1) % list.length;
-  if (list.length > 1 && list[favPos].key === history[pos]?.key) {
-    favPos = (favPos + 1) % list.length;
+  favPos = (favPos + 1) % favourites.length;
+  if (favourites.length > 1 && favourites[favPos].key === history[pos]?.key) {
+    favPos = (favPos + 1) % favourites.length;
   }
-  show({ ...list[favPos], label: `⭐ ${favPos + 1}/${list.length} · ${list[favPos].category}` });
+  show({ ...favourites[favPos], label: `⭐ ${favPos + 1}/${favourites.length} · ${favourites[favPos].category}` });
 }
 
 // NSFW jokes can't be saved, so Favourites stays clean.
@@ -361,8 +324,6 @@ function renderTools() {
   els.back.disabled = loading || neighbour(-1) < 0;
   els.forward.disabled = loading || neighbour(1) < 0;
   els.copy.disabled = !joke;
-  els.remove.disabled = loading || (!undo && !joke);
-  els.remove.textContent = undo ? '↩ Undo remove' : '🚫 Remove joke';
   els.fav.disabled = !joke || joke.nsfw;
   els.fav.setAttribute('aria-pressed', String(faved));
   els.fav.textContent = faved ? '⭐ Saved' : '☆ Save';
@@ -375,8 +336,7 @@ function renderCategories() {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'chip';
-    const saved = c.key === 'favs' ? savedFavourites().length : 0;
-    chip.textContent = saved ? `${c.label} (${saved})` : c.label;
+    chip.textContent = c.key === 'favs' && favourites.length ? `${c.label} (${favourites.length})` : c.label;
     chip.setAttribute('aria-pressed', String(c.key === category));
     chip.addEventListener('click', () => {
       category = c.key;
@@ -415,7 +375,6 @@ els.go.addEventListener('click', step);
 els.forward.addEventListener('click', () => go(1));
 els.fav.addEventListener('click', toggleFavourite);
 els.copy.addEventListener('click', copyJoke);
-els.remove.addEventListener('click', () => (undo ? undoRemove() : removeJoke()));
 els.big.addEventListener('click', toggleBig);
 els.card.addEventListener('click', () => {
   if (document.body.classList.contains('big')) step();

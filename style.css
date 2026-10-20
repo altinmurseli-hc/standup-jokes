@@ -181,6 +181,77 @@ button.ghost {
   border: 1px solid var(--border);
 }
 
+button.ghost.nav {
+  padding: 12px 20px;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: -8px;
+}
+
+button.tool {
+  font: inherit;
+  font-size: 15px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+button.tool:hover:not(:disabled) { background: var(--chip); }
+
+button.tool[aria-pressed="true"] { border-color: var(--accent); }
+
+.keys {
+  margin: -8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.big-hint {
+  display: none;
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Big screen (F): only the joke, large enough to read on a shared screen. */
+body.big .top,
+body.big .chips,
+body.big .actions,
+body.big .tools,
+body.big .keys { display: none; }
+
+body.big .app { max-width: 1400px; }
+
+body.big .big-hint { display: block; }
+
+body.big .card {
+  min-height: 80vh;
+  min-height: 80dvh;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+body.big .meta { font-size: 18px; }
+
+body.big .setup,
+body.big .punchline { font-size: clamp(32px, 5.5vw, 76px); }
+
+body.big .drum { font-size: 24px; }
+
 button:disabled {
   opacity: 0.5;
   cursor: default;

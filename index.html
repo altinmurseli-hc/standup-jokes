@@ -25,10 +25,23 @@
     </section>
 
     <div class="actions">
+      <button class="ghost nav" id="back" type="button" aria-label="Previous joke" title="Previous joke (←)" disabled>‹</button>
       <button class="primary" id="go" type="button">Tell me a joke</button>
-      <button class="ghost" id="copy" type="button" disabled>Copy</button>
+      <button class="ghost nav" id="forward" type="button" aria-label="Forward" title="Forward (→)" disabled>›</button>
     </div>
+
+    <div class="tools">
+      <button class="tool" id="fav" type="button" aria-pressed="false" disabled>☆ Save</button>
+      <button class="tool" id="copy" type="button" disabled>📋 Copy</button>
+      <button class="tool" id="explain" type="button" title="Ask Claude to explain it (opens a new tab)" disabled>🤔 I don't get it</button>
+      <button class="tool" id="today" type="button" title="Same joke for everyone today">📅 Joke of the day</button>
+      <button class="tool" id="big" type="button" title="Big screen (F)">⛶ Big screen</button>
+    </div>
+
+    <p class="keys"><kbd>Space</kbd> next · <kbd>←</kbd> <kbd>→</kbd> earlier jokes · <kbd>F</kbd> big screen</p>
+    <p class="big-hint">Space next · ← → earlier jokes · F or Esc to exit</p>
   </main>
+  <script src="jokes.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

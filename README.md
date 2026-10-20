@@ -9,7 +9,6 @@ One clean joke for the daily standup. Pick a category, press **Space**, read it 
 - **← / →** step back and forward through the jokes you already had
 - **☆ Save** keeps a joke in Favourites (stored in your browser)
 - **📅 Joke of the day** is the same joke for everyone on the same date
-- **🤔 I don't get it** opens Claude in a new tab, asking it to explain the joke
 - **F** (or ⛶ Big screen) shows only the joke, large, for screen sharing
 - Seen jokes are remembered across reloads, so you get new ones first; never the same joke twice in a row
 - Knock-knock uses a built-in list of 84 jokes

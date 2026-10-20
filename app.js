@@ -6,7 +6,6 @@ const JOKEAPI = 'https://v2.jokeapi.dev/joke/';
 const OFFICIAL = 'https://official-joke-api.appspot.com/jokes/';
 const OFFICIAL_COUNT = 451; // ids run 1..451; the joke of the day picks one by date
 const DADJOKE = 'https://icanhazdadjoke.com/';
-const CLAUDE = 'https://claude.ai/new?q=';
 const TIMEOUT_MS = 6000;
 
 const STORAGE = {
@@ -102,7 +101,6 @@ const els = {
   forward: document.getElementById('forward'),
   fav: document.getElementById('fav'),
   copy: document.getElementById('copy'),
-  explain: document.getElementById('explain'),
   today: document.getElementById('today'),
   big: document.getElementById('big'),
 };
@@ -393,8 +391,6 @@ function renderTools() {
   els.back.disabled = loading || neighbour(-1) < 0;
   els.forward.disabled = loading || neighbour(1) < 0;
   els.copy.disabled = !joke;
-  // Explaining before the punchline is out would spoil it on a shared screen.
-  els.explain.disabled = !joke || Boolean(joke.punchline && !joke.revealed);
   els.fav.disabled = !joke || joke.nsfw;
   els.fav.setAttribute('aria-pressed', String(faved));
   els.fav.textContent = faved ? '⭐ Saved' : '☆ Save';
@@ -420,26 +416,16 @@ function renderCategories() {
   }
 }
 
-const jokeText = (joke) => [joke.setup, joke.punchline].filter(Boolean).join('\n');
-
 async function copyJoke() {
   const joke = history[pos];
   if (!joke) return;
   try {
-    await navigator.clipboard.writeText(jokeText(joke));
+    await navigator.clipboard.writeText([joke.setup, joke.punchline].filter(Boolean).join('\n'));
     els.copy.textContent = 'Copied!';
   } catch (e) {
     els.copy.textContent = 'Copy failed';
   }
   setTimeout(() => { els.copy.textContent = '📋 Copy'; }, 1500);
-}
-
-// A static page can't hold an API key, so hand the joke to claude.ai in a new tab.
-function explainJoke() {
-  const joke = history[pos];
-  if (!joke) return;
-  const prompt = `Explain this joke in two or three short sentences:\n\n${jokeText(joke)}`;
-  window.open(CLAUDE + encodeURIComponent(prompt), '_blank', 'noopener');
 }
 
 // Big screen: only the joke, large, in fullscreen when the browser allows it.
@@ -456,7 +442,6 @@ els.go.addEventListener('click', step);
 els.forward.addEventListener('click', () => go(1));
 els.fav.addEventListener('click', toggleFavourite);
 els.copy.addEventListener('click', copyJoke);
-els.explain.addEventListener('click', explainJoke);
 els.today.addEventListener('click', showJokeOfTheDay);
 els.big.addEventListener('click', toggleBig);
 els.card.addEventListener('click', () => {

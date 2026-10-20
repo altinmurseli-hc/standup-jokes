@@ -62,10 +62,10 @@ const CATEGORIES = [
   { key: 'misc', label: '🎭 Misc', sources: cleanSources('misc') },
   { key: 'spooky', label: '👻 Spooky', sources: cleanSources('spooky') },
   { key: 'christmas', label: '🎄 Christmas', sources: cleanSources('christmas') },
-  { key: 'sq', label: '🇦🇱🇽🇰 Albanian', sources: [albanianList('sq', ALBANIAN), albanianList('xk', KOSOVO)] },
+  { key: 'sq', label: '🇦🇱🇽🇰 Albanian', inRandom: false, sources: [albanianList('sq', ALBANIAN)] },
   { key: 'favs', label: '⭐ Favourites' },
   { key: 'nsfw', label: '🔞 NSFW', nsfw: true, live: true, sources: [nsfwApi] },
-  { key: 'sq-nsfw', label: '🔞 Albanian NSFW', nsfw: true, sources: [albanianList('sq-nsfw', ALBANIAN_NSFW), albanianList('xk-nsfw', KOSOVO_NSFW)] },
+  { key: 'sq-nsfw', label: '🔞 Albanian NSFW', nsfw: true, sources: [albanianList('sq-nsfw', ALBANIAN_NSFW)] },
 ];
 
 const tag = (joke, cat, source) => ({
@@ -178,8 +178,9 @@ function choose(jokes) {
 }
 
 async function fetchJoke(key) {
+  // Random: the English clean categories only (no NSFW, no Albanian).
   const pool = key === 'any'
-    ? CATEGORIES.filter((c) => c.sources && !c.nsfw)
+    ? CATEGORIES.filter((c) => c.sources && !c.nsfw && c.inRandom !== false)
     : [CATEGORIES.find((c) => c.key === key)];
   const tried = [];
 

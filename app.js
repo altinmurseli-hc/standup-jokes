@@ -320,6 +320,13 @@ function setLoading(on) {
 function render() {
   const joke = history[pos];
   if (!joke) return;
+  // Replay the slide-in only when a different joke shows up, not on reveal.
+  if (els.card.dataset.n !== String(joke.n)) {
+    els.card.dataset.n = joke.n;
+    els.card.classList.remove('enter');
+    void els.card.offsetWidth;
+    els.card.classList.add('enter');
+  }
   const twoPart = Boolean(joke.punchline);
   els.meta.textContent = `#${joke.n} · ${joke.label || joke.category} · ${joke.source}`;
   els.setup.textContent = joke.setup;

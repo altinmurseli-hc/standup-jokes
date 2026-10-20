@@ -1,30 +1,23 @@
 // Kosovar jokes. No joke API has Albanian, so these are popular jokes from
 // Kosovar joke blogs and forums (hajgare.blogspot, the Hasa e Hysa thread on
-// albania.123.st, arijanche, barcoletavica, barcoletashqip, Kosovar posts on
-// humorpakufi), retold in Gheg. Rows are [setup, punchline].
+// albania.123.st, arijanche, barcoletavica, barcoletashqip, forum-al, Kosovar
+// posts on humorpakufi), retold in Gheg. The opinga joke is adapted from
+// sq.wikibooks.org/wiki/Barcoleta (CC BY-SA 4.0). Rows are [setup, punchline].
 
 // Clean: fine for a work meeting.
 const KOSOVO = [
   ["Babai: „Bir, pse i ke kaq shumë mungesa n'shkollë?“", "„S'e di, babë – s'kom qenë aty.“"],
-  ["A e dini që iPhone-i i ri e ka ni aplikacion për dobësim?", "E blen telefonin, e s't'mbesin pare as për bukë."],
   ["Tifozat po dalin prej stadiumit. Polici e pyet njërin: „Sa përfundoi?“ – „Zero me zero.“", "„E pjesa e parë?“"],
   ["Kryetari i komunës don me ndërtu ni urë. Gjermani kërkon 3 milionë, amerikani 5 milionë, e shqiptari 9 milionë. – „Pse 9?“", "„3 për ty, 3 për mu, e 3 për gjermanin që e ndërton urën.“"],
-  ["Shefi e kërkon punëtorin gjithë ditën. E gjen mbasdite: „Ku je, bre? T'kom kërku gjithë ditën!“", "„E sheh, shef? Punëtorët e mirë sot vështirë gjinden.“"],
   ["Dy shoferë përplasen. Fajtori del prej veture: „Zoti magjistër, ju lutem m'falni…“ – „Pse po m'thua magjistër?“", "„Hajt bre, sot n'Kosovë çdo i dyti osht magjistër.“"],
   ["Intervistuesi: „Cila osht dobësia jote ma e madhe?“ – „Sinqeriteti.“ – „S'po m'duket se sinqeriteti osht dobësi.“", "„S'po m'intereson hiç çka t'duket ty.“"],
   ["N'autobus, plaku i lexon plakës gazetën: „Shkruan që sa herë që marr frymë unë, n'botë vdes dikush.“", "Plaka: „Ndërroje furçën e dhëmbëve, bre.“"],
   ["N'provim, profesori e pyet Hysën: „A je idiot?“", "„Po thonë që po, profesor, po shkenca s'e ka vërtetu ende.“"],
-  ["Hasa e Hysa s'kanë pa kurrë pasqyrë. Shohin ni pasqyrë n'mur, e shikojnë veten e mendohen: „Kush janë këta? Mos janë ndonji kushëri?“", "Hasa: „Hajt, rri qetë – le t'flasin ata t'parët.“"],
   ["Hasa e Hysa nisen me kambë për n'Gjeneti, 100 kilometra. Hasa e pyet: „A je lodh?“ – „Jo.“ Te kilometri 50: „A je lodh?“ – „Jo.“ Te kilometri 99: „A je lodh?“", "„Po, krejt jom lodh.“ – „Hajt, atëherë t'kthehemi mrapa.“"],
-  ["Doktori ia ka thanë Hasës me fjetë jashtë, n'ajër t'pastër. Natën Hasa sheh yjet që xixëllojnë e e zgjon Hysën:", "„Çohu, Hysë – kanë ardhë mushkonjat me bateri!“"],
-  ["Hasa e Hysa blejnë ni radio që s'punon. Kur u bie përdhe, prej saj del ni mi.", "Hasa: „E pe? Iku kangëtari.“"],
-  ["Hasa e Hysa n'Afrikë. Natën Hasa zgjohet e sheh ni luan që po vjen kah ta tu ulurue. E zgjon Hysën:", "„Çohu, Hysë, po fillon filmi!“"],
   ["Hasa e Hysa dalin n'gjueti ariu me qenin Zuqko. Hasa: „Unë e shkund drunin, ariu bie, Zuqko e kap. Ti mbaje pushkën.“ – „E pushkën pse?“", "„Po ra unë prej drunit, qëllo qenin.“"],
   ["N'kafene ni djalë thotë: „Tash po ju tregoj ni vic për policët.“ Ni burrë çohet: „Kujdes, se unë jom polic!“", "„S'ka problem, ty po ta tregoj dy herë.“"],
   ["Ni turist n'Prishtinë i pyet dy policë: „Do you speak English?“ – „Jo.“ – „Sprechen Sie Deutsch?“ – „Jo.“ – „Parlez-vous français?“ – „Jo.“ Turisti ikën. Njëri polic: „Duhet me mësu ndonji gjuhë t'huaj.“", "Tjetri: „Pse? Ai i dinte tri, e prapë humbi.“"],
-  ["Polici e ndal ni kamion për t'katërtën herë: „Zotëri, po t'rrjedh uji prej kamionit!“", "„E di, zoti polic – osht autobotja që i lan rrugët.“"],
   ["Hasa e Hysa bien në një gropë të thellë. Pas dy ditësh Hasa nervozohet:", "„Hysë, po s'dole për pesë minuta, unë po shkoj n'shpi!“"],
-  ["Shokët e gënjejnë Nastradinin, e ai, i inatosun, u thotë: „M'ka dekë nana!“ e ikën. Pas disa ditësh vijnë me ngushëllime, e derën ua hap… nana e tij. – „Pse na gënjeve?“", "„Ju m'gënjyet mu, unë ju gënjeva juve – jemi baraz.“"],
   ["Gjyshi e shikon ndeshjen: „Kush janë këta?“ – „Futbollistë, gjysh, krejt milionerë.“", "„Milionerë? E pse po vrapojnë krejt pas ni topi? Blejani secilit nga një!“"],
   ["Gjyqtari: „T'dënoj me dhjetë vjet burg.“ – „Po, zoti gjyqtar, unë jom 88 vjeç!“", "„S'ka gjë, bëj sa t'mundesh.“"],
   ["Profesori e pyet studentin: „Cili ishte perandori ma i suksesshëm i Francës?“ Studenti hesht. – „Napoleon Bonaparti!“ – thotë profesori.", "Studenti çohet e del: „Kujtova që po e thirrni kandidatin tjetër.“"],
@@ -33,20 +26,29 @@ const KOSOVO = [
   ["N'ni kupe treni janë ni ushtar, ni oficer, ni gjyshe e mbesa e saj e re. Treni hyn n'tunel, bohet terr, e ndihet ni puthje e ni shuplakë. Gjyshja: „Mirë ia bani mbesa.“ Mbesa: „Pse e puthi gjyshen e jo mu?“ Oficeri: „Ai e puthi çikën, e shuplakën e hongra unë.“", "Ushtari, me vete: „Sa mirë – e putha dorën time, e i ra shuplakë oficerit.“"],
   ["Djali e pyet mësuesen: „Pse nusja vesh t'bardha n'dasëm?“ – „Se osht dita ma e lumtun e jetës së saj.“", "„Aha… e pse dhëndri vesh t'zeza?“"],
   ["Ni fëmijë po qan n'rrugë: „E hupa ni euro!“ Ni burrë i dhimbset e ia jep ni euro. Fëmija fillon me qajtë ma fort.", "„Tash, po mos ta kisha hupë, do t'i kisha dy!“"],
-  ["Gjyqtari i thotë hajnit: „A s'ke mendu për gruen e fëmijët kur hyne n'atë shpi?“", "„Kom mendu, zoti gjyqtar, po aty s'kishte kurgjo për ta.“"],
   ["Mësuesja: „Kush po m'thotë çka osht opera?“", "Agoni: „Kur dikë e therin me thikë, e ai, n'vend që me dekë, fillon me këndu.“"],
   ["Hajni e ndien policinë te dera: „Hape, policia!“ – „Sa veta jeni?“ – „Dy.“", "„Atëherë bisedoni mes vedi, se unë s'po dal.“"],
-  ["Sa i duhet policit me shkru „Gëzuar ditëlindjen“ n'tortë?", "Ni minutë me e shkru, e dy orë me e pastru makinën e shkrimit."],
+  ["Babai: „Shpija po digjet, dil jashtë!“ Djali: „Prit pak, babë, se po e postoj n'Facebook.“", "„Hajt, po ma bo edhe mu tag.“"],
+  ["Dy plaka flasin për peshë. Njëra: „Unë kom 80 kile, me syze.“ – „Me syze? Çka kanë syzet me peshë?“", "„Se pa syze s'po e shoh peshoren.“"],
+  ["Ni burrë ka lindë më 7.7.1977, n'orën 7 e 7 minuta. Fiton 7 milionë euro, e i vë krejt n'kalin numër 7. – „E, a doli i pari?“", "„Jo, doli i shtati.“"],
+  ["Mësuesja: „Kush e qëllon pyetjen e radhës, shkon n'shpi.“ Ni nxënës e godet bankën me libër. – „Kush e bani këtë?“", "„Unë!“ – e merr çantën e del."],
+  ["Ni fëmijë e sheh ni grua shtatzanë: „Çka ke n'bark?“ – „Fëmijën tem, që e du shumë.“", "„Po ta kishe dashtë shumë, s'do ta kishe hangër.“"],
+  ["Ni burrë e pyet Nastradinin: „Sa vjeç je?“ – „Njëzet.“ Pas njëzet vjetësh e pyet prapë: „Sa vjeç je tash?“ – „Njëzet.“ – „Si osht e mundun?“", "„Burri e thotë fjalën veç ni herë.“"],
+  ["Nastradini i pyet katundarët: „A e dini çka po du me ju thanë?“ – „Jo!“ – „Atëherë s'kom pse u flas njerëzve që s'dinë kurgjo.“ Tjetrën ditë: „A e dini?“ – „Po!“ – „Atëherë s'ka nevojë me jua thanë.“ Ditën e tretë gjysa thonë „po“, gjysa „jo“.", "„Mirë. Ata që e dinë, le t'ua tregojnë atyne që s'e dinë.“"],
+  ["Dentisti: „Hape gojën, ju lutem.“", "Zonja: „Faleminderit, doktor! Burri gjithmonë m'thotë me e mbyllë.“"],
+  ["Djali vjen prej shkolle: „Mësuesja nuk din matematikë.“ – „Pse?“", "„Dje tha që 4 osht 2 plus 2, e sot tha që osht 3 plus 1.“"],
+  ["Muja e Hasa i shikojnë avionat n'aeroport. Muja: „Si i vjedhin hajnat avionat?“", "Hasa: „N'ajër, kur bohen t'vegjël.“"],
+  ["Hajnit ia vjedhin rrobat e vjedhuna që po i shiste n'pazar. N'mbramje gruaja e pyet: „Sa i shite?“", "„Aq sa i bleva.“"],
+  ["Prishtinasi i shpjegon tiranasit: „Te na fëmijët i quajmë sipas vendit ku lindin: kush lind n'shpi – Atdhe, kush lind jashtë – Mërgim.“ – „E kush lind n'avion?“", "„Fluturim.“"],
+  ["Ni katundar blen opinga t're e kthehet n'shpi zbathun, që mos me i prishë. I çahen kambët e i rrjedh gjak. – „Pse s'i mbathe, more?“", "„A jom budalla me i prishë opingat e reja?“"],
 ];
 
 // Adult: only ever shown in the Kosovo NSFW category, never anywhere else.
 const KOSOVO_NSFW = [
   ["Dy gjakovarë vënë bast pesë euro kush rri ma gjatë nën ujë.", "Policia ende po i kërkon trupat."],
-  ["Gjakovari po i pjek qebapat n'ballkon. Fqinji i bërtet: „Krejt tymi po m'hyn n'shpi!“", "„E çka po pritshe, me t'i qu edhe qebapat?“"],
   ["Gjakovari ka qebaptore krah ni banke. Ni shok i kërkon 500 euro borxh.", "„S'bon, vlla. Kemi marrëveshje me bankën: ajo s'shet qebapa, unë s'jap borxh.“"],
   ["Çka osht ndjenja e papërcaktueme?", "Kur vjehrra ta përplas veturën e vdes."],
   ["Gruas i prishet dollapi e e thërret ni usta. Usta: „Sa herë që kalon treni, dera i hapet. Po hy brenda me pa ku e ka hallin.“ N'at moment kthehet burri, e hap dollapin e e gjen ustan brenda. – „Çka po bon ti këtu?!“", "„Po e pres trenin… e e di që s'po m'beson.“"],
-  ["Dy shokë takohen, njëri me sy t'nxime. – „Kush t'rrahu?“ – „Ni femër.“ – „Cila?“", "„Gruaja.“"],
   ["Ni djalë i propozon ni bjondeje me fjetë bashkë. Ajo: „Jo, unë s'jom e atillë. Përveç kësaj, toka osht e lagësht, nana s'më lejon…“", "„…e mandej, 100 euro janë pak.“"],
   ["Millosheviqi vdes. N'parajsë s'e pranojnë, e çojnë n'ferr. Pas pesëmbëdhjetë ditësh, dikush troket n'derën e parajsës.", "Janë djajtë: „Na hapni, jemi refugjatë.“"],
   ["Dy shokë mburren me gjyshat. Njëri: „Gjyshi im rri nën ujë pesë minuta.“", "Tjetri: „E imi u hodh n'lumë para dhjetë vjetësh, e ende s'ka dalë.“"],
@@ -62,8 +64,15 @@ const KOSOVO_NSFW = [
   ["Një bjonde dhe një brune shohin një njollë të bardhë në murin e ashensorit. Bjondja e prek me gisht dhe e shijon: „Spermë.“ E shijon edhe një herë:", "„…po s'është e dikujt nga pallati ynë.“"],
   ["Një çift po ngiste makinën dhe ajo po ia bënte me gojë rrugës. Makina del nga rruga. Burri zgjohet në spital me dy veshë në duar.", "Një bari dëshmon: „Pashë një kokë që fluturonte me diçka në gojë.“"],
   ["Gruaja i thotë burrit n'krevat: „Ti je si telefoni celular.“ Burri, krenar: „Pse, se dridhem?“", "„Jo – se sa herë që hyn n'tunel, ta humb sinjalin.“"],
-  ["Cili osht dallimi mes avionit e organit t'burrit?", "Avioni zvogëlohet kur ulet, ai zmadhohet kur e prek."],
   ["Ni burrë n'autobus lëshon gazra njëra pas tjetrës, i sigurt që muzika e mbulon zhurmën. Pas pesë minutash e sheh që krejt autobusi po e shikon.", "Atëherë e kupton: muzikën po e dëgjonte me kufje."],
   ["N'kantier, Hasa e pyet Hysën: „A ke ni metër?“", "„Jo, veç 20 centimetra.“"],
   ["Rojtari i pishinës e qet Hasën jashtë: „Ke shurru n'pishinë!“ – „Po krejt shurrojnë n'pishinë!“", "„Po, po jo prej trampolinës.“"],
+  ["N'maternitet lindin ni italiane e ni kosovare. Fëmija i italianes s'po del, derisa doktori thotë: „Spageti!“ – e ai e qet kokën. Fëmija i kosovares s'po del me kurgjo: as pite, as flija, as makiato. Doktori nervozohet: „T'qifsha nanën, a po del a jo?!“", "Fëmija e qet kokën menjëherë: „Kush ma shau nanën?!“"],
+  ["Kurbetçiu i rrëfehet gruas n'telefon prej Gjermanie: „Grua, ta pranoj, ndonjiherë shkoj te prostitutat, po veç për 20 euro.“", "Gruaja: „S'ka gjë, burrë. As unë s'marr ma shumë se 20.“"],
+  ["Burri e fsheh dashnoren n'frigorifer kur kthehet gruaja. Gruaja e kërkon nëpër shpi, vrapon shkallëve lart e poshtë derisa i bie zemra e vdes. N'parajsë takohet me dashnoren, që kishte ngri n'frigorifer. – „Ti si vdiqe?“ Gruaja ia tregon.", "Dashnorja: „Po ta kishe hapë frigoriferin, tash do t'ishim t'dyja gjallë.“"],
+  ["Studenti s'ia heq sytë ni çike. Ajo: „Mos u mundo, zemrën e kom të dikujt tjetër.“", "„Mirë, po i ke edhe organet tjera.“"],
+  ["Hyseni e vret gruen. Gjyqtari: „Pse s'e vrave dashnorin e saj?“", "„Se ateherë do t'më duhej me vra nga ni dashnor çdo natë.“"],
+  ["Gjakovari te berberi: „Sa kushton qethja?“ – „Dy euro.“ – „E rroja?“ – „Një.“", "„Mirë, atëherë ma rruj kokën.“"],
+  ["Politikani te berberi: „Ma hiq krejt çka po duket keq.“", "Berberi ia hoqi kokën."],
+  ["Drenicaku n'ni restorant n'Tiranë porosit pica. Kamarieri: „A t'ia hedh pak tabasko?“ – „Hidhja.“ E kafshon picën e i digjet goja: „Ujë, shpejt!“ – „Me gaz apo pa gaz?“", "„Qite krejt, t'qifsha nanën, se po m'digjet goja!“"],
 ];

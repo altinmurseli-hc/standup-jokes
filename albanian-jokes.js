@@ -1,7 +1,8 @@
 // Albanian and Kosovar jokes. No joke API has Albanian, so these are popular
-// jokes from Albanian joke sites and forums (humorpakufi, fv.al, barcoletashqip,
-// barcoletavica, qesh-se-eshte-falas, ersiljano, veriu, zemra.org, humorshqip,
-// kuqezi and ambra forums, ling-app) and Nastradin folk tales, retold. Rows are [setup, punchline].
+// jokes from Albanian and Kosovar joke sites and forums (humorpakufi, fv.al,
+// barcoletashqip, barcoletavica, qesh-se-eshte-falas, ersiljano, veriu, zemra.org,
+// humorshqip, kuqezi, ambra, hajgare, albania.123.st, arijanche, ling-app) and
+// Nastradin folk tales, retold. Rows are [setup, punchline].
 
 // Clean: fine for a work meeting.
 const ALBANIAN = [
@@ -60,6 +61,17 @@ const ALBANIAN = [
   ["Një plak 97-vjeçar do të sigurojë jetën. – „Në këtë moshë?“ – „Pse jo? Babai im është 125 vjeç dhe të shtunën martohet.“ – „125 vjeç?! E pse martohet?“", "„S'do ai, po e detyrojnë prindërit.“"],
   ["Një italian në taksi në Tiranë mburret: „Ne një pallat si ky e ndërtojmë për një vit.“ Shoferi: „Ne për gjashtë muaj.“ Kalojnë pranë një pallati të madh të ri: „Po këtë, për sa kohë e ndërtuat?“", "Shoferi: „S'e di, mbrëmë s'ishte këtu.“"],
   ["Në avion, papagalli shan stjuardesën dhe e hedhin jashtë. Lepuri e imiton – e hedhin edhe atë. Duke rënë, papagalli e pyet lepurin: „Ti di të fluturosh?“ – „Jo.“", "„Atëherë pse bëre trimin?“"],
+  ["Babai: „Bir, pse i ke kaq shumë mungesa n'shkollë?“", "„S'e di, babë – s'kom qenë aty.“"],
+  ["A e dini që iPhone-i i ri e ka ni aplikacion për dobësim?", "E blen telefonin, e s't'mbesin pare as për bukë."],
+  ["N'provim, profesori e pyet Hysën: „A je idiot?“", "„Po thonë që po, profesor, po shkenca s'e ka vërtetu ende.“"],
+  ["Hasa e Hysa s'kanë pa kurrë pasqyrë. Shohin ni pasqyrë n'mur, e shikojnë veten e mendohen: „Kush janë këta? Mos janë ndonji kushëri?“", "Hasa: „Hajt, rri qetë – le t'flasin ata t'parët.“"],
+  ["Hasa e Hysa nisen me kambë për n'Gjeneti, 100 kilometra. Hasa e pyet: „A je lodh?“ – „Jo.“ Te kilometri 50: „A je lodh?“ – „Jo.“ Te kilometri 99: „A je lodh?“", "„Po, krejt jom lodh.“ – „Hajt, atëherë t'kthehemi mrapa.“"],
+  ["Djali e kërkon çikën për grue. Babai i saj, shahist i madh, i thotë:", "„Bir, unë mbretëreshën s'e ndërroj për ni kalë.“"],
+  ["Para varjes, prifti i thotë hajnit: „Rrëfehu, se rrëfimi t'i hap dyert e parajsës.“", "„S'ka nevojë, atë – s'ka derë që s'e hap unë vetë.“"],
+  ["N'ni kupe treni janë ni ushtar, ni oficer, ni gjyshe e mbesa e saj e re. Treni hyn n'tunel, bohet terr, e ndihet ni puthje e ni shuplakë. Gjyshja: „Mirë ia bani mbesa.“ Mbesa: „Pse e puthi gjyshen e jo mu?“ Oficeri: „Ai e puthi çikën, e shuplakën e hongra unë.“", "Ushtari, me vete: „Sa mirë – e putha dorën time, e i ra shuplakë oficerit.“"],
+  ["N'Kinë, Fatos Nanos e pyesin: „Sa banorë ka Shqipëria?“ – „Tre milionë.“", "Kinezi: „E n'cilin hotel i keni vendosë?“"],
+  ["Djali e pyet mësuesen: „Pse nusja vesh t'bardha n'dasëm?“ – „Se osht dita ma e lumtun e jetës së saj.“", "„Aha… e pse dhëndri vesh t'zeza?“"],
+  ["Ni fëmijë po qan n'rrugë: „E hupa ni euro!“ Ni burrë i dhimbset e ia jep ni euro. Fëmija fillon me qajtë ma fort.", "„Tash, po mos ta kisha hupë, do t'i kisha dy!“"],
 ];
 
 // Adult: only ever shown in the Albanian NSFW category, never anywhere else.
@@ -113,4 +125,13 @@ const ALBANIAN_NSFW = [
   ["Një gjirokastrit po vdes dhe thërret gjithë familjen. – „Gruaja?“ – „Këtu.“ – „Djali?“ – „Këtu.“ – „Vajza?“ – „Këtu.“", "„Po atëherë pse është drita ndezur në kuzhinë?“"],
   ["Një familje gjakovare s'blen më sheqer. Vjehrra: „Mjafton ta thoni ‚sheqer‘ para se të pini kafen.“ Djali thotë „sheqer, sheqer, sheqer“…", "…dhe nëna ia merr filxhanin: „Mjaft, se po e prish me kaq shumë sheqer!“"],
   ["Mbreti Zog donte ta quante monedhën kombëtare „mat“, sipas vendlindjes së tij. Këshilltari i thotë:", "„Madhëri, pastaj njerëzit do të thonë: ‚E bleva gomarin për dy matjanë.‘“"],
+  ["Millosheviqi vdes. N'parajsë s'e pranojnë, e çojnë n'ferr. Pas pesëmbëdhjetë ditësh, dikush troket n'derën e parajsës.", "Janë djajtë: „Na hapni, jemi refugjatë.“"],
+  ["Dy shokë mburren me gjyshat. Njëri: „Gjyshi im rri nën ujë pesë minuta.“", "Tjetri: „E imi u hodh n'lumë para dhjetë vjetësh, e ende s'ka dalë.“"],
+  ["Burri n'shtratin e vdekjes: „Grua, duhet me ta rrëfye diçka: t'kom tradhtu me vite.“", "„E di, burrë. Prandaj ta kom dhanë helmin.“"],
+  ["N'autobus ni plak e troket shkopin n'dysheme gjithë rrugën. Ni djalë i ri i thotë: „Lal, vëja ni llastik shkopit, se po na çmend.“", "„Po t'ia kishte vu yt atë ni llastik, ti s'do t'ishe këtu me m'mësu mu.“"],
+  ["Papagalli ia bën borxh t'zotit me telefonata. I zoti e gozhdon n'mur, krah kryqit me Jezusin. Papagalli e pyet: „Sa kohë ke këtu ti?“ – „Dy mijë vjet.“", "„Ou… sa e madhe ka qenë fatura jote?“"],
+  ["Amerikani paguan detektiv për me e ndjekë gruan, japonezi vendos kamera. Shqiptari s'paguan kurgjo: i bërtet shërbëtores „Kurvë!“", "Shërbëtorja: „Kurvë osht gruaja jote, jo unë!“ – e ai e di krejt."],
+  ["Dy gjakovarë vënë bast pesë euro kush rri ma gjatë nën ujë.", "Policia ende po i kërkon trupat."],
+  ["Gjakovari po i pjek qebapat n'ballkon. Fqinji i bërtet: „Krejt tymi po m'hyn n'shpi!“", "„E çka po pritshe, me t'i qu edhe qebapat?“"],
+  ["Gjakovari ka qebaptore krah ni banke. Ni shok i kërkon 500 euro borxh.", "„S'bon, vlla. Kemi marrëveshje me bankën: ajo s'shet qebapa, unë s'jap borxh.“"],
 ];

@@ -35,7 +35,7 @@ const nsfwApi = {
   },
 };
 
-const bundled = (name, jokes) => ({ name, jokes, async get() { return jokes; } });
+const bundled = (name, jokes) => ({ name, async get() { return jokes; } });
 
 // One source per origin, so every joke keeps the key it had when it came from
 // the live API (seen jokes and favourites saved back then still match).
@@ -69,11 +69,6 @@ const tag = (joke, cat, source) => ({
   nsfw: Boolean(cat.nsfw),
 });
 
-// Every clean joke in a fixed order, for the joke of the day.
-const DAILY_POOL = CATEGORIES
-  .filter((c) => c.sources && !c.nsfw)
-  .flatMap((cat) => cat.sources.flatMap((source) => source.jokes.map((joke) => tag(joke, cat, source))));
-
 const OFFLINE_JOKES = OFFLINE.map(([setup, punchline], i) => ({
   key: `offline:${i}`, setup, punchline, category: 'Offline backup', source: 'built-in',
 }));
@@ -91,7 +86,6 @@ const els = {
   fav: document.getElementById('fav'),
   copy: document.getElementById('copy'),
   remove: document.getElementById('remove'),
-  today: document.getElementById('today'),
   big: document.getElementById('big'),
 };
 
@@ -205,24 +199,9 @@ async function fetchJoke(key) {
   return choose(tried) || choose(OFFLINE_JOKES.filter((j) => !removed.has(j.key)));
 }
 
-// Same joke for everyone on the same date. A removed joke hands its day to
-// the next one in the list.
-function jokeOfTheDay() {
-  const now = new Date();
-  const day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5);
-  // 7919 is a prime bigger than the list, so consecutive days land far apart
-  // and every joke gets a day before any repeats.
-  const start = (day * 7919) % DAILY_POOL.length;
-  for (let i = 0; i < DAILY_POOL.length; i++) {
-    const joke = DAILY_POOL[(start + i) % DAILY_POOL.length];
-    if (!removed.has(joke.key)) return { ...joke, label: `📅 Joke of the day · ${joke.category}`, daily: true };
-  }
-  return null;
-}
-
 function show(joke) {
   if (history[pos]?.key === joke.key) {
-    // Same joke again (one favourite, or the joke of the day twice): replay it.
+    // Same joke again (a single favourite): replay it.
     history[pos] = { ...history[pos], ...joke, revealed: false };
   } else {
     history.push({ ...joke, n: ++count, revealed: false });
@@ -276,15 +255,8 @@ async function fetchNew() {
   show(joke);
 }
 
-function showJokeOfTheDay() {
-  if (loading) return;
-  const joke = jokeOfTheDay();
-  if (joke) show(joke);
-}
-
-// 🚫 Never show this joke again (in this browser). The joke of the day moves on
-// to the next joke; anywhere else the next joke comes up. Undo is offered for a
-// few seconds in case of a mis-click.
+// 🚫 Never show this joke again (in this browser) and move on to the next one.
+// Undo is offered for a few seconds in case of a mis-click.
 function removeJoke() {
   const joke = history[pos];
   if (!joke || loading) return;
@@ -297,8 +269,7 @@ function removeJoke() {
   clearTimeout(undo?.timer);
   undo = { joke, timer: setTimeout(() => { undo = null; renderTools(); }, UNDO_MS) };
   renderCategories();
-  if (joke.daily) showJokeOfTheDay();
-  else fetchNew();
+  fetchNew();
 }
 
 function undoRemove() {
@@ -367,7 +338,6 @@ function setLoading(on) {
   loading = on;
   els.card.classList.toggle('loading', on);
   els.go.disabled = on;
-  els.today.disabled = on;
   renderTools();
 }
 
@@ -446,7 +416,6 @@ els.forward.addEventListener('click', () => go(1));
 els.fav.addEventListener('click', toggleFavourite);
 els.copy.addEventListener('click', copyJoke);
 els.remove.addEventListener('click', () => (undo ? undoRemove() : removeJoke()));
-els.today.addEventListener('click', showJokeOfTheDay);
 els.big.addEventListener('click', toggleBig);
 els.card.addEventListener('click', () => {
   if (document.body.classList.contains('big')) step();

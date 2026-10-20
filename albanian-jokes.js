@@ -1,4 +1,4 @@
-// Albanian jokes, written for this app (no joke API has Albanian).
+// Albanian and Kosovar jokes, written for this app (no joke API has Albanian).
 // Rows are [setup, punchline].
 
 // Clean: fine for a work meeting.
@@ -72,4 +72,58 @@ const ALBANIAN_NSFW = [
   ["Farmacisti e pyet gjyshin 85-vjeçar: „Pse po blen viagra, gjysh?“", "„Që të mos rrokullisem nga krevati natën.“"],
   ["Burri, me zë misterioz: „Sonte do të bëj diçka që s'e ke parë kurrë…“", "…dhe i lau enët."],
   ["Burri kthehet në 4 të mëngjesit: „Isha me shokët.“ Gruaja u telefonon dhjetë shokëve të tij.", "Pesë thonë „Po, ishte këtu“, kurse tre: „Ende është këtu, s'po e lëmë të ikë.“"],
+];
+
+// Kosovar, in Gheg. Clean: fine for a work meeting.
+const KOSOVO = [
+  ["Si e din që ka ardhë gushti n'Kosovë?", "Kur n'Prishtinë ka ma shumë targa zvicerane se kosovare."],
+  ["Kurbetçiu kthehet n'verë me Audi t'ri. Lali e pyet: „A po fiton mirë n'Zvicër, bre?“", "„Jo, Lal. Veç kredinë e kom ma t'gjatë se autobanin.“"],
+  ["Djali vjen prej Gjermanie pas dy vjetësh. Nana: „Bir, a po e harron shqipen?“", "„Jo, nanë… veç s'po m'kujtohet qysh i thonë… Kühlschrank-ut.“"],
+  ["Pse s'mundesh me gjetë sallë dasme n'Kosovë n'gusht?", "Se krejt diaspora martohet n'të njejtën javë."],
+  ["Kosovari n'Gjermani e pyet shefin: „A mundem me marrë pushim n'gusht?“ – „Pse pikërisht n'gusht?“", "„Se n'gusht kom shtatë dasma, dy synete, e ni shpi për me e mbaru.“"],
+  ["Mësuesja: „Agon, cili osht kryeqyteti i Zvicrës?“", "„Prishtina, mësuese – n'gusht.“"],
+  ["Kur luan Zvicra me Shqipërinë, për kë mban kosovari?", "Për lojtarët – gjysma e Zvicrës janë tanët."],
+  ["Zviceranët i thonë kosovarit: „Ju e keni ndërtu gjysmën e Zvicrës!“", "„Po, e tash me pare t'Zvicrës po e ndërtojmë gjysmën e Kosovës.“"],
+  ["Ni turist n'Prishtinë kërkon „ni kafe t'zezë“. Kamarieri e shikon i habitun:", "„Makiato t'madhe, t'vogël, apo me shkumë ekstra? Kafe t'zezë pin veç gjyshi.“"],
+  ["„Hajde n'kafe për pesë minuta.“", "Tri orë ma vonë, ende jeni tu e porositë makiaton e tretë."],
+  ["Ni amerikan vjen n'Kosovë e pyet: „A e doni Amerikën?“", "Lali ia tregon nipat: „Ky osht Klinton, ky Tonibler, e kjo Hilari. Ti çka po mendon?“"],
+  ["Pse kosovarët qajshin n'aeroport n'janar 2024?", "Pas 15 vjetësh n'rresht për vizë, s'po dinin çka me ba me gjithë atë kohë t'lirë."],
+  ["Pse çdo shpi n'Kosovë e kishte qiriun n'tavolinë?", "Jo për romancë – për KEK-un."],
+  ["Gjyshi: „N'kohën time rryma ikte tri herë n'ditë.“ – „E tash, gjysh?“", "„Tash ikin t'rinjtë – n'Gjermani.“"],
+  ["Lali: „N'kohën e markës, me dhjetë marka shkojshe n'Durrës, hajshe, pijshe e ktheheshe.“ – „E tash, Lal?“", "„Tash me dhjetë euro s'del as prej Prishtine.“"],
+  ["Si e din që ka ardhë korriku n'Durrës?", "Kur n'plazh dëgjon veç „hajt bre“ e „çka po bon“."],
+  ["Djali: „Nanë, s'jom i uritun.“", "Nana: „Mirë, atëherë ha veç pak flija, pak pite e ni çikë mish – sa për me provu.“"],
+  ["Musafiri n'Kosovë: „Jo, faleminderit, jom i ngopun.“", "Nikoqirja dëgjon: „Edhe ni pjatë, ju lutem.“"],
+  ["Sa kohë t'duhet prej Dardanisë n'qendër t'Prishtinës?", "Me kambë 15 minuta, me veturë 45, e me taksi – varet sa muhabet ka shoferi."],
+  ["Ku e parkojnë veturën prishtinasit?", "Kudo ku s'osht shkru „Ndalohet parkimi“. E shpesh edhe atje."],
+  ["Studenti: „Profesor, a mundem me e dhanë provimin n'afatin e shtatorit?“", "„Po, bir. Po t'cilit shtator?“"],
+  ["Djali: „Babë, du me u ba artist.“", "Babai: „Mirë, bir. Bohu njëherë inxhinier, e artist bohu n'pension.“"],
+  ["Sa pare ia çon kosovari çiftit n'dasëm?", "Aq sa ia kanë çu ata n'dasmën e tij – plus inflacionin."],
+  ["Lali te doktori: „Doktor, po m'dhemb kamba e majtë.“ – „Osht prej moshës, Lal.“", "„Po edhe e djathta osht e njejtës moshë, bre, e s'po m'dhemb!“"],
+  ["Sa kuptime ka fjala „hajt“ n'Kosovë?", "„Hajt“ – eja. „Hajt, hajt“ – ik. „Hajt bre“ – s'ta besoj. „Hajt mo“ – mos u mërzit. „Hajt…“ – ma vonë, ndoshta kurrë."],
+  ["Kur kosovari thotë „tash vij“, sa minuta janë?", "„Tash“ – dhjetë minuta. „Tash-tash“ – gjysë ore. „Ja, erdha“ – ende s'ka dalë prej shpije."],
+  ["Qysh e merr punë n'shtet n'Kosovë?", "Me CV t'mirë, me diplomë, e me ni dajë n'ministri."],
+  ["Pse kosovari s'e mbyll kurrë telefonin pa thanë „hajt“ tri herë?", "Se po e mbylle me ni „hajt“, nana mendon që je hidhëru."],
+  ["Lali e pyet nipin: „Çka po punon ti, bre?“ – „Jom programer, Lal.“ – „E çka osht kjo?“ – „Rregulloj kompjutera.“", "„Hajt, mirë. Ma rregullo televizorin atëherë.“"],
+  ["Nana i thotë djalit 35-vjeçar: „Bir, kur po martohesh?“ – „Nanë, s'po gjej kënd.“", "„Hajt, se t'kom gjetë unë tri – krejt i kom n'WhatsApp.“"],
+];
+
+// Kosovar adult: only ever shown in the Kosovo NSFW category, never anywhere else.
+const KOSOVO_NSFW = [
+  ["Dhëndri: „Nanë, sa ditë po rrin te na?“ Vjehrra: „Sa t'm'doni ju.“", "„Hajt, po a s'po e pin as kafen?“"],
+  ["Kurbetçiu kthehet prej Zvicre pas tri vjetësh e gjen n'shpi ni fëmijë ni vjeç. – „Kush osht ky?!“", "Gruaja: „Mos u mërzit, bre burrë – komshia ka ndihmu shumë sa ke qenë n'Zvicër.“"],
+  ["Nata e parë e martesës. Nusja, e turpshme: „A po e fikim dritën?“", "Dhëndri: „S'ka nevojë, KEK-u e fik vetë n'dhjetë.“"],
+  ["Lali n'barnatore: „A keni viagra?“ – „Po, Lal, po me recetë.“", "„S'kam recetë. A t'mjafton me ta tregu fotografinë e plakës?“"],
+  ["Babai i thotë djalit 18-vjeçar: „Bir, a ke dashtë me folë për gratë e për seksin?“", "„Po, babë. Çka don me ditë?“"],
+  ["Pse burrat kosovarë s'e gjejnë kurrë pikën G?", "Se s'pyesin kurrë kënd për rrugë."],
+  ["Pse kosovarët kanë pasë nga pesë fëmijë?", "Se rryma ikte çdo mbramje n'shtatë, e televizor s'kishte."],
+  ["Gruaja: „Sot doktori tha që e kom trupin si 20-vjeçare.“ – „E për prapanicën 60-vjeçare çka tha?“", "„Për ty s'foli hiç.“"],
+  ["Sa grada e ka rakia e Lalit?", "Aq sa me ta harru emrin, adresën e emrin e gruas – n'atë rend."],
+  ["Burri vjen n'shpi n'4 t'mëngjesit. Gruaja: „Ku ke qenë?!“", "„N'kafe, bre. Ishte pak ma e gjatë makiatoja.“"],
+  ["Çka ka t'përbashkët burri kosovar me makiaton?", "T'dy janë t'nxehtë e plot shkumë, po s'zgjasin ma shumë se ni minutë."],
+  ["Kurbetçiu i thotë gruas n'telefon: „Zemër, a ma ke mallin?“", "„Po. Ma s'shumti ditën kur vjen rroga.“"],
+  ["Pse n'dasmat kosovare nusja s'qeshë kurrë?", "Se e din çka e pret: vjehrra, dhjetë kunata, e ni burrë që s'di me ba as kafe."],
+  ["Lali e pyet plakën: „A t'kujtohet nata jonë e parë?“ – „Po.“ – „A ishte mirë?“", "„Po, shumë mirë… për dy minuta.“"],
+  ["Doktori: „Lal, duhet me e lanë rakinë, duhanin e kafenë.“ – „E çka m'mbetet, doktor?“ – „Plaka, Lal.“", "„Hajt, ma mirë ma jep rakinë.“"],
+  ["Dhëndri: „Vjehrra po vjen me ndejt dy javë.“ Shoku: „E çka po bon ti?“", "„Po shkoj dy javë n'Zvicër – me punu.“"],
 ];

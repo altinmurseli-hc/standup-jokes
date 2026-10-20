@@ -63,9 +63,11 @@ const CATEGORIES = [
   { key: 'spooky', label: '👻 Spooky', sources: cleanSources('spooky') },
   { key: 'christmas', label: '🎄 Christmas', sources: cleanSources('christmas') },
   { key: 'sq', label: '🇦🇱 Albanian', sources: [albanianList('sq', ALBANIAN)] },
+  { key: 'xk', label: '🇽🇰 Kosovo', sources: [albanianList('xk', KOSOVO)] },
   { key: 'favs', label: '⭐ Favourites' },
   { key: 'nsfw', label: '🔞 NSFW', nsfw: true, live: true, sources: [nsfwApi] },
   { key: 'sq-nsfw', label: '🔞 Albanian NSFW', nsfw: true, sources: [albanianList('sq-nsfw', ALBANIAN_NSFW)] },
+  { key: 'xk-nsfw', label: '🔞 Kosovo NSFW', nsfw: true, sources: [albanianList('xk-nsfw', KOSOVO_NSFW)] },
 ];
 
 const tag = (joke, cat, source) => ({

@@ -1,7 +1,7 @@
 // Standup Jokes: pick a category, press Space, read it out loud.
 // Two-part jokes keep the punchline hidden until the second press.
-// The clean categories only use the hand-checked jokes in clean-jokes.js.
-// NSFW is the only live one, and its jokes never mix into the others.
+// The clean categories only use checked jokes that ship with the page.
+// The two NSFW categories never mix into the others; NSFW is the only live one.
 
 const JOKEAPI = 'https://v2.jokeapi.dev/joke/';
 const TIMEOUT_MS = 6000;
@@ -47,6 +47,13 @@ const knockList = bundled('built-in', KNOCK_KNOCK.map(([who, punchline]) => ({
   punchline,
 })));
 
+// Keyed by the setup text, so adding or reordering jokes keeps "seen" intact.
+const albanianList = (prefix, jokes) => bundled('built-in', jokes.map(([setup, punchline]) => ({
+  id: `${prefix}:${setup}`,
+  setup,
+  punchline,
+})));
+
 const CATEGORIES = [
   { key: 'any', label: '🎲 Random' },
   { key: 'dad', label: '👨 Dad', sources: cleanSources('dad') },
@@ -55,8 +62,10 @@ const CATEGORIES = [
   { key: 'misc', label: '🎭 Misc', sources: cleanSources('misc') },
   { key: 'spooky', label: '👻 Spooky', sources: cleanSources('spooky') },
   { key: 'christmas', label: '🎄 Christmas', sources: cleanSources('christmas') },
+  { key: 'sq', label: '🇦🇱 Albanian', sources: [albanianList('sq', ALBANIAN)] },
   { key: 'favs', label: '⭐ Favourites' },
-  { key: 'nsfw', label: '🔞 NSFW', nsfw: true, sources: [nsfwApi] },
+  { key: 'nsfw', label: '🔞 NSFW', nsfw: true, live: true, sources: [nsfwApi] },
+  { key: 'sq-nsfw', label: '🔞 Albanian NSFW', nsfw: true, sources: [albanianList('sq-nsfw', ALBANIAN_NSFW)] },
 ];
 
 const tag = (joke, cat, source) => ({
@@ -152,7 +161,7 @@ function saveCategory(key) {
   try { localStorage.setItem(STORAGE.category, key); } catch (e) { /* ignore */ }
 }
 
-const inNsfw = () => category === 'nsfw';
+const inNsfw = () => Boolean(CATEGORIES.find((c) => c.key === category)?.nsfw);
 
 // NSFW jokes stay in the NSFW category, also when stepping back through history.
 const allowedHere = (joke) => !joke.nsfw || inNsfw();
@@ -185,7 +194,7 @@ async function fetchJoke(key) {
       if (jokes.some((j) => !seen.has(j.key))) return choose(jokes);
       tried.push(...jokes);
       // A built-in category with nothing unseen left: recycle the oldest.
-      if (pool.length === 1 && !cat.nsfw) break;
+      if (pool.length === 1 && !cat.live) break;
     } catch (e) {
       console.warn(`${cat.label} failed:`, e.message);
     }
